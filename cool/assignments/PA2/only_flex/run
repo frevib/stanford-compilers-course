@@ -1,0 +1,4 @@
+#!/bin/bash
+flex test.flex
+gcc lex.yy.c
+./a.out ../foo.cl
