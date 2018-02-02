@@ -1,12 +1,4 @@
-/*
- *  The scanner definition for COOL.
- */
 
-/*
- *  Stuff enclosed in %{ %} in the first section is copied verbatim to the
- *  output, so headers and global definitions are placed here to be visible
- * to the code in the file.  Don't remove anything that was here initially
- */
 %{
 #include <cool-parse.h>
 #include <stringtab.h>
@@ -233,29 +225,31 @@ WHITESPACE	[ \n\f\r\t\v]
 								BEGIN(INITIAL);
 							}
 <DASH_COMMENT><<EOF>>		{		
-								printf("EOF dash_comment");						
+								// printf("EOF dash_comment");						
 								curr_lineno = yylineno;
 								BEGIN(INITIAL);
 								
 							}
 <DASH_COMMENT>[^\n]+		{
-								printf("dash_comment\n");
+								// printf("dash_comment\n");
 								// DO nothing								
 							}
-
-<INITIAL>(\(\*)				{
+<INITIAL>"(*"				{
+								// printf("star comment???");
 								curr_lineno = yylineno;
 								BEGIN(COMMENT);
 							}
-<INITIAL>(\*\))				{
+<INITIAL>\*\)				{
 								curr_lineno = yylineno;
 								cool_yylval.error_msg = "Unmatched *)";
 								BEGIN(INITIAL);
 							}
-<COMMENT>(\*\))|(\n)		{
+<COMMENT>"*)"				{
+								// printf("end comment!");
 								curr_lineno = yylineno;
 								BEGIN(INITIAL);
 							}
+<COMMENT>\n					{}
 <COMMENT>[^\n]				{
 								
 							}
@@ -377,7 +371,7 @@ WHITESPACE	[ \n\f\r\t\v]
 							
 							
 							
-<INITIAL>{DARROW}			{ curr_lineno = yylineno; return DARROW; }
+<INITIAL>{DARROW}		{ curr_lineno = yylineno; return DARROW; }
 <INITIAL>"<-"		    {  curr_lineno = yylineno;  return ASSIGN;    } 	
 <INITIAL>"+" 			{  curr_lineno = yylineno;  return int('+');  }
 <INITIAL>"/"		    {  curr_lineno = yylineno;  return int('/');  }
@@ -391,15 +385,13 @@ WHITESPACE	[ \n\f\r\t\v]
 <INITIAL>","			{  curr_lineno = yylineno;  return int(',');  }
 <INITIAL>";"			{  curr_lineno = yylineno;  return int(';');  }
 <INITIAL>":"			{  curr_lineno = yylineno;  return int(':');  }
-<INITIAL>"("			{  curr_lineno = yylineno;  return int('(');  }
-<INITIAL>")"		    {  curr_lineno = yylineno;  return int(')');  }
+<INITIAL>"("			{  curr_lineno = yylineno;  return char('(');  }
+<INITIAL>")"		    {  curr_lineno = yylineno;  return char(')');  }
 <INITIAL>"@"			{  curr_lineno = yylineno;  return int('@');  }
 <INITIAL>"{"			{  curr_lineno = yylineno;  return int('{');  }
 <INITIAL>"}"			{  curr_lineno = yylineno;  return int('}');  }
 
 <INITIAL>{WHITESPACE}		{}
-
-
 
 
 <INITIAL>.					{ 
