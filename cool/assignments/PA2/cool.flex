@@ -245,7 +245,7 @@ WHITESPACE	[ \n\f\r\t\v]
 <INITIAL>"*)"				{
 								curr_lineno = yylineno;
 								cool_yylval.error_msg = "Unmatched *)";
-								BEGIN(INITIAL);
+								return(ERROR);
 							}
 <COMMENT>"*)"				{
 								// printf("--end comment!\n");

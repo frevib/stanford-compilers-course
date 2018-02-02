@@ -1516,7 +1516,7 @@ YY_RULE_SETUP
 {
 								curr_lineno = yylineno;
 								cool_yylval.error_msg = "Unmatched *)";
-								BEGIN(INITIAL);
+								return(ERROR);
 							}
 	YY_BREAK
 case 22:
