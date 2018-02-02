@@ -31,6 +31,8 @@ extern int verbose_flag;
 
 extern YYSTYPE cool_yylval;
 
+unsigned int comment_depth = 0;
+
 /*
  *  Add Your own definitions here
  */
@@ -235,21 +237,31 @@ WHITESPACE	[ \n\f\r\t\v]
 								// DO nothing								
 							}
 <INITIAL>"(*"				{
-								// printf("star comment???");
+								// printf("--star comment\n");
+								comment_depth++;
 								curr_lineno = yylineno;
 								BEGIN(COMMENT);
 							}
-<INITIAL>\*\)				{
+<INITIAL>"*)"				{
 								curr_lineno = yylineno;
 								cool_yylval.error_msg = "Unmatched *)";
 								BEGIN(INITIAL);
 							}
 <COMMENT>"*)"				{
-								// printf("end comment!");
+								// printf("--end comment!\n");
 								curr_lineno = yylineno;
-								BEGIN(INITIAL);
+								comment_depth--;
+								if (comment_depth == 0) {
+									BEGIN(INITIAL);
+								}
 							}
-<COMMENT>\n					{}
+<COMMENT>"(*"				{
+								comment_depth++;
+							}
+<COMMENT>\n					{ 
+								// printf("--skip line\n");
+								curr_lineno++;
+							}
 <COMMENT>[^\n]				{
 								
 							}
